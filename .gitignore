@@ -1,0 +1,31 @@
+*.class
+
+/node_modules
+
+#SSH Key
+*.pem
+*.ppk
+
+# Mobile Tools ofr Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+#Gradle temporary files
+target/
+
+#Eclispe files
+**/.project
+**/.classpath
+**/.settings/
+
+#IntelliJ files
+
+**/*.iml
+**/.idea
+**/.gradle
+
+/.metadata/
