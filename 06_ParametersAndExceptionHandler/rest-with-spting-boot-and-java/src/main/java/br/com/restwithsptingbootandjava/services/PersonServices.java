@@ -6,7 +6,9 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.restwithsptingbootandjava.data.vo.v1.PersonVO;
 import br.com.restwithsptingbootandjava.exceptions.ResourceNotFoundException;
+import br.com.restwithsptingbootandjava.mapper.ModelMapperConfig;
 import br.com.restwithsptingbootandjava.model.Person;
 import br.com.restwithsptingbootandjava.repositories.PersonRepository;
 
@@ -18,33 +20,40 @@ public class PersonServices {
 	@Autowired
 	PersonRepository repository;
 	
-	public List<Person> findAll() {
-		return repository.findAll();
+	@Autowired
+	public List<PersonVO> findAll() {
+		
+		return ModelMapperConfig.parseListObjects(repository.findAll(), PersonVO.class);
 	}
 
-	public Person findById(Long id) {
+	public PersonVO findById(Long id) {
 		logger.info("Finding one person.");
-		return repository.findById(id)
+		var entity =  repository.findById(id)
 				.orElseThrow(()-> new ResourceNotFoundException("No records found for this ID: " + id));
+		return ModelMapperConfig.parseObject(entity, PersonVO.class);
 	}
 	
-	public Person update(Person person) {
+	public PersonVO update(PersonVO person) {
 		logger.info("Update person id: " + person.getId());
 		var entity = repository.findById(person.getId())
 		.orElseThrow(()-> new ResourceNotFoundException("No records found for this Id: " + person.getId()));
 		
 		entity.setFirstName(person.getFirstName());
-		entity.setLastName(person.getLastName());
 		entity.setAddress(person.getAddress());
 		entity.setGender(person.getGender());
 		
-		return repository.save(person);
+		var vo = repository.save(entity);
+		return ModelMapperConfig.parseObject(vo, PersonVO.class);
 	}
 	
-	public Person create (Person person) {
+	public PersonVO create (PersonVO person) {
 		logger.info("Create person");
-		return repository.save(person);
+		
+		var entity  = ModelMapperConfig.parseObject(person, Person.class);
+		var vo = repository.save(entity);
+		return ModelMapperConfig.parseObject(vo, PersonVO.class);
 	}
+
 	
 	public void delete(Long id) {
 		var entity = repository.findById(id)
